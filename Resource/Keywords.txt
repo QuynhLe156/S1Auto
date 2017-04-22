@@ -1,0 +1,151 @@
+*** Settings ***
+Resource          Variables.txt
+
+*** Keywords ***
+Go to Projects List
+    Wait Until Page Contains Element    //div[contains(@id,"MainPlaceHolder_GridView")]/table/tbody/tr[2]/td[7]/input
+    Click Element    //div[contains(@id,"MainPlaceHolder_GridView")]/table/tbody/tr[2]/td[7]/input
+    Wait Until Page Contains    Project Count    15s
+
+Log In
+    [Arguments]    ${BROWSER}    ${username}    ${pass}
+    Open Browser    ${baseurl}    ${BROWSER}
+    Wait Until Page Contains Element    id = ctl00_ContentPlaceHolder1_txtUserName    10s
+    Input Text    id = ctl00_ContentPlaceHolder1_txtUserName    ${username}
+    Wait Until Page Contains Element    id=ctl00_ContentPlaceHolder1_txtPassword    10s
+    Input Text    id=ctl00_ContentPlaceHolder1_txtPassword    ${pass}
+    Wait Until Page Contains Element    id=ctl00_ContentPlaceHolder1_txtPassword    10s
+    Click Element    id=ctl00_ContentPlaceHolder1_btnSignIn
+    Wait Until Page Contains    William Lyon Homes - Newport Beach    10s
+
+Go to Lots List
+    Wait Until Page Contains Element    //div[contains(@id,"__gvctl00_MainPlaceHolder_GridView1__div")]/table/tbody/tr[3]/td[8]/input
+    Click Element    //div[contains(@id,"__gvctl00_MainPlaceHolder_GridView1__div")]/table/tbody/tr[3]/td[8]/input
+    Wait Until Page Contains    Total Lots    15s
+
+Go to Lot Info
+    Wait Until Page Contains Element    //div[contains(@id,"__gvctl00_MainPlaceHolder_GridView1__div")]/table/tbody/tr[4]/td[13]/input
+    Click Element    //div[contains(@id,"__gvctl00_MainPlaceHolder_GridView1__div")]/table/tbody/tr[4]/td[13]/input
+    Wait Until Page Contains    Fit and Finish    15s
+
+Create new RFS
+    [Documentation]    //select[@name="ctl00$MainPlaceHolder$ddlSubReasonCode"]/option[@value="115"]
+    Wait Until Page Contains Element    id=ctl00_lblMenu4    15s
+    Click Element    id=ctl00_lblMenu4
+    Wait Until Page Contains    Check if this item is ready to send to the subcontractor.
+    @{DRDlist_fields}=    Create List    ctl00$MainPlaceHolder$ddlProject    ctl00$MainPlaceHolder$ddlLot    ctl00$MainPlaceHolder$ddlCSR    ctl00$MainPlaceHolder$ddlRequestType    ctl00$MainPlaceHolder$ddlTrade
+    ...    ctl00$MainPlaceHolder$ddlSubcontractor    ctl00$MainPlaceHolder$ddlLocation    ctl00$MainPlaceHolder$ddlLocation    ctl00$MainPlaceHolder$ddlReasonCode    ctl00$MainPlaceHolder$ddlSubReasonCode    ctl00$MainPlaceHolder$ddlWorkOrderType
+    : FOR    ${field}    IN    @{DRDlist_fields}
+    \    Select an item    ${field}
+    Comment    Wait Until Page Contains Element    //option[contains(@value,"2162708")]    15s
+    Comment    Click Element    //option[contains(@value,"2162708")]
+    Comment    Wait Until Page Contains Element    //option[contains(@value,"468696")]    15s
+    Comment    Click Element    //option[contains(@value,"468696")]
+    Comment    Wait Until Page Contains Element    //select[@name="ctl00$MainPlaceHolder$ddlRequestType"]/option[@value="9"]    15s
+    Comment    Click Element    //select[@name="ctl00$MainPlaceHolder$ddlRequestType"]/option[@value="9"]
+    Comment    Wait Until Page Contains Element    //select[@name="ctl00$MainPlaceHolder$ddlTrade"]/option[@value="2482"]    15s
+    Comment    Click Element    //select[@name="ctl00$MainPlaceHolder$ddlTrade"]/option[@value="2482"]
+    Comment    Wait Until Page Contains Element    //select[@name="ctl00$MainPlaceHolder$ddlLocation"]/option[@value="-931"]    15s
+    Comment    Click Element    //select[@name="ctl00$MainPlaceHolder$ddlLocation"]/option[@value="-931"]
+    Comment    Wait Until Page Contains Element    //select[@name="ctl00$MainPlaceHolder$ddlReasonCode"]/option[@value="34"]    15s
+    Comment    Click Element    //select[@name="ctl00$MainPlaceHolder$ddlReasonCode"]/option[@value="34"]
+    Comment    Wait Until Page Contains Element    //select[@name="ctl00$MainPlaceHolder$ddlSubReasonCode"]/option[@value="115"]    15s
+    Comment    Click Element    //select[@name="ctl00$MainPlaceHolder$ddlSubReasonCode"]/option[@value="115"]
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_txtTitle"]    15s
+    ${randomstring}=    Generate Random String
+    Input Text    //input[@id="ctl00_MainPlaceHolder_txtTitle"]    ${randomstring}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnSaveAndExit"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnSaveAndExit"]
+    Sleep    3s
+
+Go to Reason Code report
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_Button3"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_Button3"]
+    Wait Until Page Contains Element    id=ctl00_ContentPlaceHolder1_HyperLink20    15s
+    Click Element    id=ctl00_ContentPlaceHolder1_HyperLink20
+    Wait Until Page Contains Element    //input[@value="Export"]
+
+Go to Sub Code report
+    [Documentation]    //td[@id="ctl00_MainPlaceHolder_txtDateClosed_DDD_C_BT"]/table/tbody/tr/td
+    Comment    Wait Until Page Contains Element    //a[contains(@href,"WOs_By_SubReasonCode.aspx?CodeID=")]    15s
+    Comment    Click Element    //a[contains(@href,"WOs_By_SubReasonCode.aspx?CodeID=")]
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr
+    ${num_of_options}=    Get Matching Xpath Count    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr
+    ${index}=    Evaluate    random.randint(2, ${num_of_options})    modules=random
+    Click Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${index}]/td[3]/a
+    Wait Until Page Contains    Work Orders by Sub Code
+
+Select an item
+    [Arguments]    ${field}
+    Comment    Run Keyword If    "${field}"=="ctl00$MainPlaceHolder$ddlSubcontractor"    Click Element    //input[@id="ctl00_MainPlaceHolder_chkAllSubs"]
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //select[@name="${field}"]/option
+    ${num_of_options}=    Get Matching Xpath Count    //select[@name="${field}"]/option
+    ${index}=    Evaluate    random.randint(1, ${num_of_options})    modules=random
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //select[@name="${field}"]/option[${index}]    15s
+    Run Keyword And Ignore Error    Click Element    //select[@name="${field}"]/option[${index}]
+    Sleep    1s
+
+Create new RFS from Lot Info
+    Wait Until Page Contains Element    //input[@id = "ctl00_MainPlaceHolder_btnRFS"]    15s
+    Click Element    //input[@id = "ctl00_MainPlaceHolder_btnRFS"]
+    Wait Until Page Contains    (Pictures should be < 500K)    15s
+    @{DRDlist_fields}=    Create List    ctl00$MainPlaceHolder$ddlCSR    ctl00$MainPlaceHolder$ddlRequestType    ctl00$MainPlaceHolder$ddlTrade    ctl00$MainPlaceHolder$ddlSubcontractor    ctl00$MainPlaceHolder$ddlLocation
+    ...    ctl00$MainPlaceHolder$ddlLocation    ctl00$MainPlaceHolder$ddlReasonCode    ctl00$MainPlaceHolder$ddlSubReasonCode    ctl00$MainPlaceHolder$ddlWorkOrderType
+    : FOR    ${field}    IN    @{DRDlist_fields}
+    \    Select an item    ${field}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_txtTitle"]    15s
+    ${randomstring}=    Generate Random String
+    Input Text    //input[@id="ctl00_MainPlaceHolder_txtTitle"]    ${randomstring}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnSaveAndExit"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnSaveAndExit"]
+    Sleep    3s
+
+Close a WO
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr    15s
+    ${num_of_options}=    Get Matching Xpath Count    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr
+    ${index}=    Evaluate    random.randint(2, ${num_of_options})    modules=random
+    Click Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${index}]/td[10]/input
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnExit"]    15s
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_txtDateClosed_I"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_txtDateClosed_I"]
+    Input Text    //input[@id="ctl00_MainPlaceHolder_txtDateClosed_I"]    4/22/2017
+    Sleep    1s
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnExit"]
+    Wait Until Page Contains    Work Orders by Sub Code    15s
+
+Search for user
+    [Arguments]    ${search_str}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_Button3"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_Button3"]
+    Wait Until Page Contains Element    //a[@id="ctl00_ContentPlaceHolder1_LinkManageOwnersOccupants"]    15s
+    Click Element    //a[@id="ctl00_ContentPlaceHolder1_LinkManageOwnersOccupants"]
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_txtSearch"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_txtSearch"]
+    Input Text    //input[@id="ctl00_MainPlaceHolder_txtSearch"]    ${search_str}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnSearch"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnSearch"]
+
+Create a new user
+    [Arguments]    ${first_name}    ${last_name}    ${username}    ${password}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_Button3"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_Button3"]
+    Wait Until Page Contains Element    //a[@id="ctl00_ContentPlaceHolder1_LinkManageOwnersOccupants"]    15s
+    Click Element    //a[@id="ctl00_ContentPlaceHolder1_LinkManageOwnersOccupants"]
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnCreateUser"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnCreateUser"]
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtFirstName"]    15s
+    Input text    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtFirstName"]    ${first_name}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtLastName"]    15s
+    Input text    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtLastName"]    ${last_name}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtUserName"]    15s
+    Input text    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtUserName"]    ${username}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtPassword"]    15s
+    Input text    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtPassword"]    ${password}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtPassword2"]    15s
+    Input text    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtPassword2"]    ${password}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]
+    Wait Until Page Contains    Manage Owners and Occupants

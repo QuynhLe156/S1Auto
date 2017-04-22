@@ -1,0 +1,9 @@
+*** Settings ***
+Library           Selenium2Library
+Resource          Keywords.txt
+Library           String
+
+*** Variables ***
+${BROWSER}        gc
+${port}           ${EMPTY}
+${baseurl}        http://ec2-54-69-35-83.us-west-2.compute.amazonaws.com

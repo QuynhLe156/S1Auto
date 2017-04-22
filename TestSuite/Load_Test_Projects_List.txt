@@ -1,0 +1,69 @@
+*** Settings ***
+Test Teardown     Close Browser
+Resource          ../Resource/Variables.txt
+
+*** Test Cases ***
+LoadTestProjectsList
+    : FOR    ${i}    IN RANGE    50
+    \    Log In    ${BROWSER}    chd    tsuki
+    \    Go to Projects List
+    \    Go to Lots List
+    \    Go to Lot Info
+    \    Close Browser
+
+CreateNewRFS
+    : FOR    ${i}    IN RANGE    60
+    \    Log In    ${BROWSER}    chd    tsuki
+    \    Go to Projects List
+    \    Create new RFS
+    \    Close Browser
+
+ViewReasonCodereport
+    : FOR    ${i}    IN RANGE    50
+    \    Log In    ${BROWSER}    Greg    (skipper171)
+    \    Go to Reason Code report
+    \    Close Browser
+
+ViewSubCodereport
+    : FOR    ${i}    IN RANGE    50
+    \    Log In    ${BROWSER}    Greg    (skipper171)
+    \    Go to Reason Code report
+    \    Go to Sub Code report
+    \    Close Browser
+
+CreateNewRFS_FromLotInfo
+    : FOR    ${i}    IN RANGE    60
+    \    Log In    ${BROWSER}    Greg    (skipper171)
+    \    Go to Projects List
+    \    Go to Lots List
+    \    Go to Lot Info
+    \    Create new RFS from Lot Info
+    \    Close Browser
+
+Close a WO
+    : FOR    ${i}    IN RANGE    50
+    \    Log In    ${BROWSER}    Greg    (skipper171)
+    \    Go to Reason Code report
+    \    Go to Sub Code report
+    \    Close a WO
+    \    Close Browser
+
+test
+    ${date}=    Get Current
+
+Search User
+    :FOR    ${i}    IN RANGE    50
+    \    Log In    ${BROWSER}    chd    tsuki
+    \    ${search_str}=    Generate Random String    3
+    \    Search for user    ${search_str}
+    \    Close Browser
+
+Create a new user
+    :FOR    ${i}    IN RANGE    50
+    \    Log In    ${BROWSER}    chd    tsuki
+    \    ${first_name}=    Generate Random String    5
+    \    ${last_name}=    Generate Random String    5
+    \    ${username}=    Generate Random String    7
+    \    ${password}=    Generate Random String    5
+    \    Create a new user    ${first_name}    ${last_name}    ${username}    ${password}
+    \    Close Browser
