@@ -3,8 +3,11 @@ Resource          Variables.txt
 
 *** Keywords ***
 Go to Projects List
-    Wait Until Page Contains Element    //div[contains(@id,"MainPlaceHolder_GridView")]/table/tbody/tr[2]/td[7]/input
-    Click Element    //div[contains(@id,"MainPlaceHolder_GridView")]/table/tbody/tr[2]/td[7]/input
+    [Documentation]    \
+    ...    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${division_index}]/td[7]/input
+    ${division_index}=    Evaluate    random.randint(1, 4)    modules=random
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${division_index}]/td[7]/input
+    Click Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${division_index}]/td[7]/input
     Wait Until Page Contains    Project Count    15s
 
 Log In
@@ -19,14 +22,22 @@ Log In
     Wait Until Page Contains    William Lyon Homes - Newport Beach    10s
 
 Go to Lots List
-    Wait Until Page Contains Element    //div[contains(@id,"__gvctl00_MainPlaceHolder_GridView1__div")]/table/tbody/tr[3]/td[8]/input
-    Click Element    //div[contains(@id,"__gvctl00_MainPlaceHolder_GridView1__div")]/table/tbody/tr[3]/td[8]/input
+    [Documentation]    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${index}]/td[8]/input
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody
+    ${num_of_options}=    Get Matching Xpath Count    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr
+    ${index}=    Evaluate    random.randint(2, ${num_of_options})    modules=random
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${index}]/td[8]/input
+    Click Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${index}]/td[8]/input
     Wait Until Page Contains    Total Lots    15s
 
 Go to Lot Info
-    Wait Until Page Contains Element    //div[contains(@id,"__gvctl00_MainPlaceHolder_GridView1__div")]/table/tbody/tr[4]/td[13]/input
-    Click Element    //div[contains(@id,"__gvctl00_MainPlaceHolder_GridView1__div")]/table/tbody/tr[4]/td[13]/input
-    Wait Until Page Contains    Fit and Finish    15s
+    [Documentation]    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${index}]/td[13]/input
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody
+    ${num_of_options}=    Get Matching Xpath Count    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr
+    ${index}=    Evaluate    random.randint(2, ${num_of_options})    modules=random
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${index}]/td[13]/input
+    Click Element    //table[@id="ctl00_MainPlaceHolder_GridView1"]/tbody/tr[${index}]/td[13]/input
+    Wait Until Page Contains    If you make any changes be sure to click "Save" before you exit.    15s
 
 Create new RFS
     [Documentation]    //select[@name="ctl00$MainPlaceHolder$ddlSubReasonCode"]/option[@value="115"]
@@ -136,6 +147,48 @@ Create a new user
     Click Element    //a[@id="ctl00_ContentPlaceHolder1_LinkManageOwnersOccupants"]
     Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnCreateUser"]    15s
     Click Element    //input[@id="ctl00_MainPlaceHolder_btnCreateUser"]
+    Input new user info    ${first_name}    ${last_name}    ${username}    ${password}
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]
+    Wait Until Page Contains    Manage Owners and Occupants
+
+Change Ownership
+    [Documentation]    //input[@id="ctl00$MainPlaceHolder$btnCancel"]
+    Wait Until Page COntains Element    //input[@id="ctl00_MainPlaceHolder_btnChangeOwner"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnChangeOwner"]
+    Wait Until Page COntains Element    //input[@id="ctl00_MainPlaceHolder_btnCancel"]    15s
+    Wait Until Page COntains Element    //input[@id="rbtnExistingUser1"]    15s
+    Click Element    //input[@id="rbtnExistingUser1"]
+    Select a user from search results
+    Wait Until Page Contains    Account Rep:    15s
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_ChooseOwner1_txtFirstName"]    15s
+    ${first_name}=    Get Text    //input[@id="ctl00_MainPlaceHolder_ChooseOwner1_txtFirstName"]
+    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]
+    Wait Until Page Contains    If you make any changes be sure to click "Save" before you exit.    15s
+    Wait Until Page Contains    ${first_name}    15s
+
+Select a user from search results
+    Wait Until Page COntains Element    //input[@id="ctl00_MainPlaceHolder_txtPurchaseDate_I"]    15s
+    ${purchasedate}=    Generate random date
+    Input Text    //input[@id="ctl00_MainPlaceHolder_txtPurchaseDate_I"]    ${purchasedate}
+    Wait Until Page COntains Element    //input[@id="ctl00_MainPlaceHolder_ChooseOwner1_txtSearchOwners"]
+    ${search_term}=    Generate Random String    2    ngoh
+    Input Text    //input[@id="ctl00_MainPlaceHolder_ChooseOwner1_txtSearchOwners"]    ${search_term}
+    Run Keyword And Ignore Error    Wait Until Page Contains Element    //select[@name="ctl00$MainPlaceHolder$ChooseOwner1$lbOwners"]/option
+    ${num_of_options}=    Get Matching Xpath Count    //select[@name="ctl00$MainPlaceHolder$ChooseOwner1$lbOwners"]/option
+    ${index}=    Evaluate    random.randint(1, ${num_of_options})    modules=random
+    Click Element    //select[@name="ctl00$MainPlaceHolder$ChooseOwner1$lbOwners"]/option[${index}]
+
+Generate random date
+    ${month}=    Evaluate    random.randint(1, 12)    modules=random
+    ${date}=    Evaluate    random.randint(1, 31)    modules=random
+    ${year}=    Evaluate    random.randint(2016, 2017)    modules=random
+    ${purchasedate}=    Set Variable    ${month}/${date}/${year}
+    [Return]    ${purchasedate}
+
+Input new user info
+    [Arguments]    ${first_name}    ${last_name}    ${username}    ${password}
     Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtFirstName"]    15s
     Input text    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtFirstName"]    ${first_name}
     Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtLastName"]    15s
@@ -146,6 +199,20 @@ Create a new user
     Input text    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtPassword"]    ${password}
     Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtPassword2"]    15s
     Input text    //input[@id="ctl00_MainPlaceHolder_AddOwner1_txtPassword2"]    ${password}
+
+Add owner
+    [Arguments]    ${first_name}    ${last_name}    ${username}    ${password}
+    Wait Until Page COntains Element    //input[@id="ctl00_MainPlaceHolder_btnAddOwners"]    15s
+    Click Element    //input[@id="ctl00_MainPlaceHolder_btnAddOwners"]
+    Wait Until Page COntains Element    //input[@id="ctl00_MainPlaceHolder_btnCancel"]    15s
+    Comment    Wait Until Page COntains Element    //input[@id="rbtnExistingUser1"]    15s
+    Comment    Click Element    //input[@id="rbtnExistingUser1"]
+    Comment    Select a user from search results
+    Comment    Wait Until Page Contains    Account Rep:    15s
+    Comment    Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_ChooseOwner1_txtFirstName"]    15s
+    Comment    ${first_name}=    Get Text    //input[@id="ctl00_MainPlaceHolder_ChooseOwner1_txtFirstName"]
+    Input new user info    ${first_name}    ${last_name}    ${username}    ${password}
     Wait Until Page Contains Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]    15s
     Click Element    //input[@id="ctl00_MainPlaceHolder_btnSave"]
-    Wait Until Page Contains    Manage Owners and Occupants
+    Wait Until Page Contains    If you make any changes be sure to click "Save" before you exit.    15s
+    Wait Until Page Contains    ${first_name}    15s

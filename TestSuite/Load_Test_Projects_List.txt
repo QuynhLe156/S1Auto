@@ -42,7 +42,7 @@ CreateNewRFS_FromLotInfo
 
 Close a WO
     : FOR    ${i}    IN RANGE    50
-    \    Log In    ${BROWSER}    Greg    (skipper171)
+    \    Log In    ${BROWSER}    JWhittemore    Race@2016
     \    Go to Reason Code report
     \    Go to Sub Code report
     \    Close a WO
@@ -52,18 +52,40 @@ test
     ${date}=    Get Current
 
 Search User
-    :FOR    ${i}    IN RANGE    50
+    : FOR    ${i}    IN RANGE    50
     \    Log In    ${BROWSER}    chd    tsuki
     \    ${search_str}=    Generate Random String    3
     \    Search for user    ${search_str}
     \    Close Browser
 
 Create a new user
-    :FOR    ${i}    IN RANGE    50
+    : FOR    ${i}    IN RANGE    50
     \    Log In    ${BROWSER}    chd    tsuki
     \    ${first_name}=    Generate Random String    5
     \    ${last_name}=    Generate Random String    5
     \    ${username}=    Generate Random String    7
     \    ${password}=    Generate Random String    5
     \    Create a new user    ${first_name}    ${last_name}    ${username}    ${password}
+    \    Close Browser
+
+Change Ownership
+    : FOR    ${i}    IN RANGE    50
+    \    Log In    ${BROWSER}    chd    tsuki
+    \    Go to Projects List
+    \    Go to Lots List
+    \    Go to Lot Info
+    \    Change Ownership
+    \    Close Browser
+
+Add new owner
+    : FOR    ${i}    IN RANGE    50
+    \    Log In    ${BROWSER}    jillianq    jnlyon80
+    \    Go to Projects List
+    \    Go to Lots List
+    \    Go to Lot Info
+    \    ${first_name}=    Generate Random String    5
+    \    ${last_name}=    Generate Random String    5
+    \    ${username}=    Generate Random String    7
+    \    ${password}=    Generate Random String    5
+    \    Add owner    ${first_name}    ${last_name}    ${username}    ${password}
     \    Close Browser
